@@ -1,0 +1,5 @@
+1) Criar um código html e script em JS usando DOM que copie o conteúdo de uma caixa
+de texto para outra só que em caixa alta;
+2) Criar um botão de alto contraste que alterne a cor de fundo do body para preto e cor do texto para branco. Adicionalmente, crie um botão para resetar as cores originais.
+3) Crie uma pequena calculadora de soma.
+4) Pesquise como criar elementos e adicione o conteúdo de uma caixa de texto em uma lista não ordenada.

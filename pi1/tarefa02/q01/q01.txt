@@ -1,0 +1,7 @@
+1) Estude o que é o DOM e a que ele se aplica a partir das seguintes páginas:
+a. https://developer.mozilla.org/ptBR/docs/Web/API/Document_Object_Model/Introduction
+b. https://www.w3schools.com/js/js_htmldom.asp
+
+
+
+
