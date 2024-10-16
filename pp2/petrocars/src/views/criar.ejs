@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Criar <%= itens.nome %></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2ff;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333366;
+            text-align: center;
+        }
+        p {
+            color: #333366;
+            text-align: center;
+            font-size: 18px;
+        }
+        .form-container {
+            width: 60%;
+            margin: 0 auto;
+            background-color: #e6e6ff;
+            padding: 30px;
+            border: 1px solid #333366;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            color: #333366;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .form-group input[type="text"], .form-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #333366;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group .radio-group {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .form-group .radio-group label {
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            color: #333366;
+        }
+        .form-group .radio-group input {
+            margin-right: 5px;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .button-container button {
+            background-color: #333366;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .button-container button:hover {
+            background-color: #444488;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Criar <%= itens.nome %></h1>
+
+    <p>Preencha o formulário abaixo para adicionar um novo <%= itens.nome %> ao sistema.</p>
+
+    <div class="form-container">
+        <form action="/criar-<%= itens.nome.toLowerCase() %>" method="POST">
+            <!-- Função para formatar nome removendo underscores e capitalizando -->
+            <% function formatarNome(nome) { 
+                return nome
+                    .replace(/id/gi, '') // Remove "id" ou "ID" (case insensitive)
+                    .replace(/_/g, ' ') // Substitui underscores por espaços
+                    .replace(/\b\w/g, l => l.toUpperCase()); // Capitaliza a primeira letra de cada palavra
+            } %>
+                
+
+            <!-- Gera os campos dinamicamente -->
+            <!-- Parte do código da view onde gera os campos dinamicamente -->
+<% for(let i = 0; i < itens.campos.length; i++) { 
+    const campo = itens.campos[i];
+    const tipo = itens.tipos[i]; // Assumindo que você tenha o tipo dos campos no array `tipos`
+%>
+    <div class="form-group">
+        <label for="<%= campo %>"><%= formatarNome(campo) %>:</label>
+        
+        <% if (tipo === 'boolean') { %>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" id="<%= campo %>" name="<%= campo %>" value="true" required> Sim
+                </label>
+                <label>
+                    <input type="radio" id="<%= campo %>" name="<%= campo %>" value="false"> Não
+                </label>
+            </div>
+        <% } else if (tipo === 'list') { %>
+            <!-- Campo para selecionar montadora -->
+            <select id="<%= campo %>" name="<%= campo %>" required>
+                <option value="">Selecione um item</option>
+                <% for (let i = 0; i < lista.length; i++) { %>
+                    <% const item = lista[i]; %>
+                    <% const keys = Object.keys(item); %>
+                    <option value="<%= item[keys[0]] %>"><%= item[keys[1]] %></option>
+                <% } %>
+            </select>
+            
+        <% } else { %>
+            <!-- Campo normal (texto, número, etc.) -->
+            <input type="<%= tipo === 'number' ? 'number' : 'text' %>" id="<%= campo %>" name="<%= campo %>" required>
+        <% } %>
+    </div>
+<% } %>
+
+            
+            <div class="button-container">
+                <button type="submit">Criar <%= itens.nome %></button>
+                <button type="button" onclick="window.location.href='/'">Cancelar</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

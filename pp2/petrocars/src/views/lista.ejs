@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Lista de Itens</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #CCCCFF;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #000080;
+            text-align: center;
+        }
+        p {
+            color: #000080;
+            text-align: center;
+            font-size: 18px;
+        }
+        table {
+            width: 70%;
+            margin: 30px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #000080;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #9999FF;
+            color: #000080;
+        }
+        td {
+            background-color: #EEEEFF;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button {
+            background-color: #000080;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button-container button:hover {
+            background-color: #0000CD;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de <%= itens.tabela %></h1>
+    <p>Abaixo está a lista completa de <%= itens.tabela %> cadastrados no sistema.</p>
+    <table>
+        <tr>
+            <% itens.nomes.forEach((item) => { %>
+                <th><%= item %></th>
+            <% }) %>
+            <th>Ações</th>
+        </tr>
+        <% for(let i = 0; i < lista.length; i++) { %>
+            <tr>
+                <% for(let chave of Object.keys(lista[i])) { %>
+                    <td><%= lista[i][chave] %></td>
+                <% } %>
+                <td>
+                    <button onclick="window.location.href='/editar-<%= itens.tabela %>/<%= Object.values(lista[i])[0] %>'">Editar</button>
+                    <form action="/deletar-<%= itens.tabela %>/<%= Object.values(lista[i])[0] %>" method="POST" style="display:inline;">
+                        <input type="submit" value="Deletar" onclick="return confirm('Você realmente deseja apagar este item?');">
+                    </form>
+                </td>
+                
+            </tr>
+        <% } %>
+        
+    </table>
+    <div class="button-container">
+        <button onclick="window.location.href='/criar-<%= itens.tabela %>'">Criar Novo Item</button>
+        <button onclick="window.location.href='/'">Voltar ao Início</button>
+    </div>
+</body>
+</html>
