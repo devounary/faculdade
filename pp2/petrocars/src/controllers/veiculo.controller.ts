@@ -1,5 +1,6 @@
 import { ulid } from "ulid";
 import * as db from "../../database/database";
+import { veiculoSchema } from "../routes/veiculo.routes";
 
 type Veiculo = {
     id_veiculo: string,
@@ -12,7 +13,7 @@ type Veiculo = {
     id_modelo: string,
 }
 
-const criarVeiculo = async (veiculo: Veiculo) => {
+const criarVeiculo = async (veiculo: veiculoSchema) => {
     const id = ulid();
 
     const query = {
@@ -29,6 +30,21 @@ const criarVeiculo = async (veiculo: Veiculo) => {
         throw error;
     }
 
+}
+
+const editarVeiculo = async (veiculo: veiculoSchema, id: string) => {
+    const query = {
+        text: "UPDATE veiculo SET cor = $1, ano_fabricacao = $2, ano_modelo = $3, valor = $4, placa = $5, vendido = $6, id_modelo = $7 WHERE id_veiculo = $8",
+        values: [veiculo.cor, veiculo.ano_fabricacao, veiculo.ano_modelo, veiculo.valor, veiculo.placa, veiculo.vendido, veiculo.id_modelo, id]
+    }
+
+    try {
+        const result = await db.default.query(query.text, query.values);
+        return result;
+    } catch (error) {
+        console.error("Erro ao editar veiculo:", error);
+        throw error;
+    }
 }
 
 const deletarVeiculo = (id: string) => {
@@ -48,4 +64,4 @@ const deletarVeiculo = (id: string) => {
 }
 
 
-export { criarVeiculo, deletarVeiculo }
+export { criarVeiculo, deletarVeiculo, Veiculo, editarVeiculo }

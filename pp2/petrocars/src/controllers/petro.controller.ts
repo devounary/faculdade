@@ -1,4 +1,3 @@
-import { ulid } from "ulid";
 import * as db from "../../database/database";
 
 const contarRegistros = async (table: string) => {

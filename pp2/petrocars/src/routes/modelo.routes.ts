@@ -2,7 +2,19 @@ import { Request, Response, Router } from "express"
 import { contarRegistros, listarRegistros, buscarRegistro } from "../controllers/petro.controller"
 import path from 'path';
 import { criarModelo, deletarModelo, Modelo, editarModelo } from "../controllers/modelo.controller";
+import { z, ZodError } from "zod";
 const router = Router();
+
+const modeloSchema = z.object({
+    nome_modelo: z.string().refine((value) => isNaN(Number(value))),
+    id_montadora: z.string(),
+    valor_referencia: z.number(),
+    motorizacao: z.boolean(),
+    turbo: z.boolean(),
+    automatico: z.boolean()
+})
+
+export type modeloSchema = z.infer<typeof modeloSchema>;
 
 router.get("/modelo", async (req: Request, res: Response) => {
     try {
@@ -36,12 +48,38 @@ router.get("/criar-modelos", async (req: Request, res: Response) => {
 
 router.post("/criar-modelo", async (req: Request, res: Response) => {
     try {
-        const modelo: Modelo = req.body;
+        const modeloData = {
+            ...req.body,
+            valor_referencia: parseFloat(req.body.valor_referencia),
+            motorizacao: req.body.motorizacao === 'true',
+            turbo: req.body.turbo === 'true',
+            automatico: req.body.automatico === 'true'
+        };
+
+        const modelo = modeloSchema.parse(modeloData);
         await criarModelo(modelo);
         res.redirect("/lista-modelos");
     } catch (error) {
-        console.error("Erro ao criar modelo:", error);
-        res.status(500).send("Erro ao criar o modelo.");
+
+        if (error instanceof ZodError) {
+
+            const montadoras = await listarRegistros("montadora");
+
+            console.error('Validation failed:', error.errors);
+            const itens = {
+                "nome": "Modelo",
+                "campos": ["nome_modelo", "id_montadora", "valor_referencia", "motorizacao", "turbo", "automatico"],
+                "tipos": ["string", "list", "number", "boolean", "boolean", "boolean"]
+            };
+            res.render(path.join(__dirname, "..", "/views/criar"), {
+                itens,
+                errorMessage: "Erro de validação. Por favor, verifique os dados inseridos.",
+                lista: montadoras,
+                table: req.body
+            });
+        } else {
+            console.error('Unexpected error:', error);
+        }
     }
 });
 
@@ -66,12 +104,44 @@ router.get("/editar-modelos/:id", async (req: Request, res: Response) => {
 
 router.post("/editar-modelo", async (req, res) => {
     try {
-        const infosModelo: Modelo = req.body;
-        await editarModelo(infosModelo);
+        const id = req.body.id_modelo;
+
+        console.log("resultado: ", req.body)
+
+        const modeloData = {
+            ...req.body,
+            valor_referencia: parseFloat(req.body.valor_referencia),
+            motorizacao: req.body.motorizacao === 'true',
+            turbo: req.body.turbo === 'true',
+            automatico: req.body.automatico === 'true',
+            id_montadora: String(req.body.id_montadora)
+        };
+
+        const modelo = modeloSchema.parse(modeloData);
+        await editarModelo(modelo, id);
         res.redirect("/lista-modelos");
     } catch (error) {
-        console.error("Erro ao editar modelo:", error);
-        res.status(500).send("Erro ao editar o modelo.");
+        if (error instanceof ZodError) {
+
+            const montadoras = await listarRegistros("montadora");
+
+            const modelo: Modelo = req.body;
+
+            console.error('Validation failed:', error.errors);
+            const itens = {
+                "nome": "Modelo",
+                "campos": ["nome_modelo", "id_montadora", "valor_referencia", "motorizacao", "turbo", "automatico"],
+                "tipos": ["string", "list", "number", "boolean", "boolean", "boolean"]
+            };
+            res.render(path.join(__dirname, "..", "/views/editar"), {
+                itens,
+                errorMessage: "Erro de validação. Por favor, verifique os dados inseridos.",
+                lista: montadoras,
+                table: modelo
+            });
+        } else {
+            console.error('Unexpected error:', error);
+        }
     }
 });
 

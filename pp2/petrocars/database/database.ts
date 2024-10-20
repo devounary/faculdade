@@ -1,4 +1,3 @@
-// src/database/database.ts
 import { Pool, PoolClient } from "pg";
 import { createMontadoraTable } from '../src/models/montadora.models';
 import { createModeloVeiculoTable } from '../src/models/modelo.models';

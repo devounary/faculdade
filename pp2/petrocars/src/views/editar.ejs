@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
     <title>Criar <%= itens.nome %></title>
@@ -75,11 +75,33 @@
         .button-container button:hover {
             background-color: #444488;
         }
+
+
+        .error-popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+          }
+      
+          .error-popup button {
+            background-color: white;
+            color: #f44336;
+            border: none;
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+          }
     </style>
 </head>
 <body>
 
-    <h1>Criar <%= itens.nome %></h1>
+    <h1>Editar <%= itens.nome %></h1>
 
     <p>Preencha o formulário abaixo para editar <%= itens.nome %></p>
 
@@ -123,7 +145,7 @@
                             </label>
                         </div>
                     <% } else if (tipo === 'list') { %>
-                        <select id="id_item" name="id_item" required>
+                        <select id="<%= campo %>" name="<%= campo %>" required>
                             <option value="">Selecione um item</option>
                             <% for (let j = 0; j < lista.length; j++) { %>
                                 <% const item = lista[j]; %>
@@ -143,6 +165,20 @@
             </div>
         </form>
     </div>
-
+    <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+        <div id="errorPopup" class="error-popup">
+          <p><%= errorMessage %></p>
+          <button onclick="closeErrorPopup()">Fechar</button>
+        </div>
+      
+        <script>
+          function closeErrorPopup() {
+            document.getElementById('errorPopup').style.display = 'none';
+          }
+      
+          // Exibir o pop-up automaticamente
+          document.getElementById('errorPopup').style.display = 'block';
+        </script>
+      <% } %>
 </body>
 </html>

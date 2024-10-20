@@ -1,5 +1,6 @@
 import { ulid } from "ulid";
 import * as db from "../../database/database";
+import { montadoraSchema } from "../routes/montadora.routes";
 
 type Montadora = {
   id_montadora: string,
@@ -8,9 +9,10 @@ type Montadora = {
   ano_fundacao: number
 }
 
-
 // criação montadora
-async function criarMontadora(montadora: Montadora) {
+async function criarMontadora(montadora: montadoraSchema) {
+
+
   const id = ulid();
 
   const query = {
@@ -20,7 +22,6 @@ async function criarMontadora(montadora: Montadora) {
 
   try {
     const result = await db.default.query(query.text, query.values);
-    console.log(`Nova montadora criada com ID: ${id}`);
     return result.rows[0];
   } catch (error) {
     console.error("Erro ao criar montadora:", error);
@@ -28,6 +29,7 @@ async function criarMontadora(montadora: Montadora) {
   }
 }
 
+// deleção da montadora
 const deletarMontadora = (id: string) => {
   const query = {
     text: `DELETE FROM MONTADORA WHERE ID_MONTADORA = $1`,
@@ -36,7 +38,6 @@ const deletarMontadora = (id: string) => {
 
   try {
     const result = db.default.query(query.text, query.values);
-    console.log(`Registro deletado com sucesso!`);
     return result;
   } catch (error) {
     console.error("Erro ao deletar registro:", error);
@@ -44,11 +45,12 @@ const deletarMontadora = (id: string) => {
   }
 }
 
-const editarMontadora = (montadora: Montadora) => {
+// edição da montadora
+const editarMontadora = (montadora: montadoraSchema, id: string) => {
 
   const query = {
     text: "UPDATE montadora SET nome_montadora = $1, pais = $2, ano_fundacao = $3 WHERE id_montadora = $4",
-    values: [montadora.nome_montadora, montadora.pais, montadora.ano_fundacao, montadora.id_montadora]
+    values: [montadora.nome_montadora, montadora.pais, montadora.ano_fundacao, id]
   }
 
   try {
